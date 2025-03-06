@@ -14,6 +14,7 @@ import re
 import json
 import sys
 import os
+import argparse
 
 NPBLKUP_RESULTS = re.compile(r"^(.*):(.*)\s(\d*\.\d*:\d*)$")
 
@@ -66,19 +67,30 @@ def nbplkup(zone: str) -> list[(str, str)]:
 
 
 def main():
+    parser = argparse.ArgumentParser("gtscraper")
+    parser.add_argument("zone", default=None)
+    parser.add_argument("--output", type=argparse.FileType("w"), default=sys.stdout)
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.INFO, stream=sys.stderr)
-    zone_results = {}
-    
+    zone_results = {
+        "format": "v1",
+        "zones": getzones(),
+        "nodes": [],
+    }
+
     # Iterate the zones and scan them
-    for zone in getzones():
+    for zone in zone_results["zones"]:
+        if args.zone and zone != args.zone:
+            continue
         logging.info("Scanning %s", zone)
-        node_data = nbplkup(zone) 
-        zone_results[zone] = node_data
+        node_data = nbplkup(zone)
+        zone_results["nodes"].extend(node_data)
 
-    nodes = sum([len(x) for x in zone_results.values()])
-    zones = len(zone_results.keys())
+    nodes = len(zone_results["nodes"])
+    zones = len(zone_results["zones"])
 
-    print('{0} zones, {1} nodes'.format(zones, nodes), file=sys.stderr)
+    print("{0} zones, {1} nodes".format(zones, nodes), file=sys.stderr)
 
     # Dump out the resulting JSON to stdout
     sys.stdout.write(json.dumps(zone_results))
