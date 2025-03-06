@@ -15,6 +15,7 @@ import json
 import sys
 import os
 import argparse
+import shutil
 
 NPBLKUP_RESULTS = re.compile(r"^(.*):(.*)\s(\d*\.\d*:\d*)$")
 
@@ -80,6 +81,16 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+
+    # Check we have the pre-reqs to actually run
+    for cmd in ["getzones", "nbplkup"]:
+        if not shutil.which(cmd):
+            logging.error(
+                "%s is missing from your PATH, is netatalk installed and working?", cmd
+            )
+            return
+
+    # Init the results dict
     zone_results = {
         "format": "v1",
         "zones": getzones(),
