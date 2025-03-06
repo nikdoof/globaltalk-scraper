@@ -111,7 +111,7 @@ def main():
     print("{0} zones, {1} nodes".format(zones, nodes), file=sys.stderr)
 
     # Dump out the resulting JSON to stdout
-    sys.stdout.write(json.dumps(zone_results))
+    args.output.write(json.dumps(zone_results))
 
 
 if __name__ == "__main__":
