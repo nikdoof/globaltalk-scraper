@@ -68,8 +68,15 @@ def nbplkup(zone: str) -> list[(str, str)]:
 
 def main():
     parser = argparse.ArgumentParser("gtscraper")
-    parser.add_argument("zone", default=None)
-    parser.add_argument("--output", type=argparse.FileType("w"), default=sys.stdout)
+    parser.add_argument(
+        "--zone", required=False, default=None, help="Scan an individual zone"
+    )
+    parser.add_argument(
+        "--output",
+        type=argparse.FileType("w"),
+        default=sys.stdout,
+        help="Filename to write the resulting JSON to",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, stream=sys.stderr)
