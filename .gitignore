@@ -154,3 +154,4 @@ cython_debug/
 charts/**/charts/*
 Chart.lock
 .ruff_cache
+*.json
