@@ -52,14 +52,14 @@ def nbplkup(zone: str) -> list[(str, str)]:
         for x in cmd.stdout.split("\n")
         if x.strip() != ""
     ]:
-        name, endpoint_type, address = node
-        address, port = address.split(":")
+        object, endpoint_type, address = node
+        address, socket = address.split(":")
         zone_results.append(
             {
-                "name": name.strip(),
+                "object": object.strip(),
                 "type": endpoint_type.strip(),
                 "address": address,
-                "port": port,
+                "socket": socket,
                 "zone": zone,
             }
         )
