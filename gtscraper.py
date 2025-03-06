@@ -70,7 +70,11 @@ def nbplkup(zone: str) -> list[(str, str)]:
 def main():
     parser = argparse.ArgumentParser("gtscraper")
     parser.add_argument(
-        "--zone", required=False, default=None, help="Scan an individual zone"
+        "--zone",
+        nargs="*",
+        required=False,
+        default=None,
+        help="Scan selected zones",
     )
     parser.add_argument(
         "--output",
@@ -78,9 +82,16 @@ def main():
         default=sys.stdout,
         help="Filename to write the resulting JSON to",
     )
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+    if args.debug:
+        level = logging.DEBUG
+    else:
+        level = logging.INFO
+    logging.basicConfig(level=level, stream=sys.stderr)
+
+    logging.debug("Arguments: %s", args)
 
     # Check we have the pre-reqs to actually run
     for cmd in ["getzones", "nbplkup"]:
