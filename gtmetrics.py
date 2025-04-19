@@ -30,17 +30,17 @@ def main():
     # Nodes per zone
     zone_counts = collections.Counter(node.get("zone", "Unknown") for node in globaltalk_data['nodes'])
     for k, v in zone_counts.items():
-        args.output.write('global_talk_zone_devices{{zone="{0}"}} {1}\n'.format(k, v))
+        args.output.write('globaltalk_zone_devices{{zone="{0}"}} {1}\n'.format(k, v))
 
     # Count of device types
     device_type_counts = collections.Counter(node.get("type", "Unknown") for node in globaltalk_data['nodes'])
     for k, v in device_type_counts.items():
-        args.output.write('global_talk_device_types{{type="{0}"}} {1}\n'.format(k, v))
+        args.output.write('globaltalk_device_types{{type="{0}"}} {1}\n'.format(k, v))
 
     # jRouter versions
     jrouter_versions = collections.Counter(node.get("object", "Unknown") for node in globaltalk_data['nodes'] if node.get("object", "Unknown").startswith('jrouter'))
     for k, v in jrouter_versions.items():
-        args.output.write('global_talk_jrouter_versions{{version="{0}"}} {1}\n'.format(k.replace('jrouter ', ''), v))
+        args.output.write('globaltalk_jrouter_versions{{version="{0}"}} {1}\n'.format(k.replace('jrouter ', ''), v))
 
 if __name__ == "__main__":
     main()
