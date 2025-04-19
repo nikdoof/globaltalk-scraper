@@ -8,14 +8,15 @@ the GlobalTalk network, and create some nice visualisations of the network.
 Created for MARCHintosh 2025
 """
 
-import logging
-import subprocess
-import re
-import json
-import sys
-import os
 import argparse
+import concurrent.futures
+import json
+import logging
+import os
+import re
 import shutil
+import subprocess
+import sys
 
 NPBLKUP_RESULTS = re.compile(r"^(.*):(.*)\s(\d*\.\d*:\d*)$")
 
@@ -83,6 +84,12 @@ def main():
         help="Filename to write the resulting JSON to",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=10,
+        help="The number of concurrent zone scans to run",
+    )
     args = parser.parse_args()
 
     if args.debug:
@@ -108,13 +115,23 @@ def main():
         "nodes": [],
     }
 
-    # Iterate the zones and scan them
-    for zone in zone_results["zones"]:
+    # Subfunction to run
+    def lookup_zone(zone) -> list[(str, str)]:
         if args.zone and zone != args.zone:
-            continue
+            return None
         logging.info("Scanning %s", zone)
-        node_data = nbplkup(zone)
-        zone_results["nodes"].extend(node_data)
+        return nbplkup(zone)
+
+    # Use ThreadPoolExecutor for concurrent execution
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = {
+            executor.submit(lookup_zone, zone): zone for zone in zone_results["zones"]
+        }
+
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                zone_results["nodes"].extend(result)
 
     nodes = len(zone_results["nodes"])
     zones = len(zone_results["zones"])
