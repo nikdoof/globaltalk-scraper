@@ -84,6 +84,7 @@ def main():
         help="Filename to write the resulting JSON to",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--quiet", action="store_true")
     parser.add_argument(
         "--workers",
         type=int,
@@ -94,6 +95,8 @@ def main():
 
     if args.debug:
         level = logging.DEBUG
+    elif args.quiet:
+        level = logging.ERROR
     else:
         level = logging.INFO
     logging.basicConfig(level=level, stream=sys.stderr)
