@@ -139,7 +139,7 @@ def main():
     nodes = len(zone_results["nodes"])
     zones = len(zone_results["zones"])
 
-    print("{0} zones, {1} nodes".format(zones, nodes), file=sys.stderr)
+    logging.info("{0} zones, {1} nodes".format(zones, nodes), file=sys.stderr)
 
     # Dump out the resulting JSON to stdout
     args.output.write(json.dumps(zone_results))
