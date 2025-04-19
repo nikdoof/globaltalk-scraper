@@ -19,8 +19,13 @@ def main():
             globaltalk_data = json.load(file)
     except FileNotFoundError:
         print(f"Error: File '{args.filename}' not found.")
+        sys.exit(1)
     except json.JSONDecodeError as e:
         print(f"Error: Failed to decode JSON - {e}")
+        sys.exit(1)
+
+    # Number of zones
+    args.output.write('globaltalk_zones {0}\n'.format(len(globaltalk_data['zones'])))
 
     # Nodes per zone
     zone_counts = collections.Counter(node.get("zone", "Unknown") for node in globaltalk_data['nodes'])
