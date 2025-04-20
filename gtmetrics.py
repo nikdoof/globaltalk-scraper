@@ -27,7 +27,11 @@ def main():
     # Number of zones
     args.output.write('globaltalk_zones {0}\n'.format(len(globaltalk_data['zones'])))
 
-    # Nodes per zone
+    # Unique Devices
+    devices = collections.Counter(node.get("address", "Unknown") for node in globaltalk_data['nodes'])
+    args.output.write('globaltalk_unique_devices {0}\n'.format(len(devices)))
+
+    # Endpoints per zone
     zone_counts = collections.Counter(node.get("zone", "Unknown") for node in globaltalk_data['nodes'])
     for k, v in zone_counts.items():
         args.output.write('globaltalk_zone_devices{{zone="{0}"}} {1}\n'.format(k, v))
