@@ -1,24 +1,7 @@
 {
     "extends": [
-        "config:recommended"
-    ],
-    "packageRules": [
-        {
-            "description": "Auto merge GitHub Actions",
-            "matchManagers": [
-                "github-actions"
-            ],
-            "matchDatasources": [
-                "github-tags"
-            ],
-            "automerge": true,
-            "ignoreTests": true,
-            "automergeType": "branch",
-            "matchUpdateTypes": [
-                "minor",
-                "patch",
-                "digest"
-            ]
-        }
+        "config:recommended",
+        "github>nikdoof/renovate-config:python",
+        "github>nikdoof/renovate-config:github"
     ]
 }
