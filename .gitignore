@@ -155,3 +155,4 @@ charts/**/charts/*
 Chart.lock
 .ruff_cache
 *.json
+nodes.txt
