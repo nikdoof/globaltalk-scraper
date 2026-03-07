@@ -34,11 +34,23 @@
         let
           cfg = config.services.globaltalk;
           globaltalkPkg = self.packages.${pkgs.system}.globaltalk;
+          netatalkPkg = cfg.scrape.netatalkPackage;
         in
         {
           options.services.globaltalk = {
             scrape = {
               enable = lib.mkEnableOption "GlobalTalk network scraper timer";
+
+              netatalkPackage = lib.mkOption {
+                type = lib.types.package;
+                default = pkgs.netatalk;
+                defaultText = lib.literalExpression "pkgs.netatalk";
+                description = ''
+                  The netatalk package providing ``getzones`` and ``nbplkup``.
+                  Override this if you are running a custom build of netatalk,
+                  or if netatalk is managed outside of nixpkgs.
+                '';
+              };
 
               interval = lib.mkOption {
                 type = lib.types.str;
@@ -122,6 +134,10 @@
                 after = [ "network.target" ];
                 serviceConfig = {
                   Type = "oneshot";
+                  # Make getzones and nbplkup available inside the service unit.
+                  # ExecSearchPath extends the PATH seen by the service without
+                  # relying on the system environment or hardcoded store paths.
+                  ExecSearchPath = "${netatalkPkg}/bin";
                   ExecStartPre = "/run/current-system/sw/bin/mkdir -p ${builtins.dirOf cfg.scrape.outputFile}";
                   ExecStart =
                     let
@@ -166,6 +182,10 @@
                 after = lib.optional cfg.scrape.enable "globaltalk-scrape.service";
                 serviceConfig = {
                   Type = "oneshot";
+                  # netatalk is needed when metrics is invoked in live-scrape
+                  # mode (no input file). ExecSearchPath ensures getzones and
+                  # nbplkup are always resolvable regardless of invocation.
+                  ExecSearchPath = "${netatalkPkg}/bin";
                   ExecStartPre = "/run/current-system/sw/bin/mkdir -p ${builtins.dirOf cfg.metrics.outputFile}";
                   ExecStart =
                     let
