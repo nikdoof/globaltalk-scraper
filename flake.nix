@@ -134,10 +134,13 @@
                 after = [ "network.target" ];
                 serviceConfig = {
                   Type = "oneshot";
-                  # Make getzones and nbplkup available inside the service unit.
-                  # ExecSearchPath extends the PATH seen by the service without
-                  # relying on the system environment or hardcoded store paths.
+                  # Make getzones and nbplkup available both to systemd's own
+                  # exec resolution (ExecSearchPath) and to shutil.which() inside
+                  # the Python process (Environment PATH). ExecSearchPath alone
+                  # is not enough — it only affects how systemd resolves Exec*
+                  # directives, not the PATH that the launched process inherits.
                   ExecSearchPath = "${netatalkPkg}/bin";
+                  Environment = "PATH=${netatalkPkg}/bin:/run/current-system/sw/bin:/run/wrappers/bin";
                   ExecStartPre = "/run/current-system/sw/bin/mkdir -p ${builtins.dirOf cfg.scrape.outputFile}";
                   ExecStart =
                     let
@@ -182,10 +185,12 @@
                 after = lib.optional cfg.scrape.enable "globaltalk-scrape.service";
                 serviceConfig = {
                   Type = "oneshot";
-                  # netatalk is needed when metrics is invoked in live-scrape
-                  # mode (no input file). ExecSearchPath ensures getzones and
-                  # nbplkup are always resolvable regardless of invocation.
+                  # Same reasoning as the scrape service: both ExecSearchPath
+                  # and Environment PATH are required so that shutil.which()
+                  # inside the Python process can find getzones and nbplkup
+                  # when metrics is run in live-scrape mode (no input file).
                   ExecSearchPath = "${netatalkPkg}/bin";
+                  Environment = "PATH=${netatalkPkg}/bin:/run/current-system/sw/bin:/run/wrappers/bin";
                   ExecStartPre = "/run/current-system/sw/bin/mkdir -p ${builtins.dirOf cfg.metrics.outputFile}";
                   ExecStart =
                     let
