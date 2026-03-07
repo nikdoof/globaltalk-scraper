@@ -20,6 +20,10 @@
       };
 
       # NixOS module (system-independent).
+      # The package is sourced from self.packages rather than pkgs.globaltalk
+      # because the module receives a plain pkgs without the overlay applied.
+      # self.packages.${pkgs.system}.globaltalk is the standard pattern for
+      # NixOS modules shipped inside a flake.
       nixosModule =
         {
           config,
@@ -29,7 +33,7 @@
         }:
         let
           cfg = config.services.globaltalk;
-          globaltalkPkg = pkgs.globaltalk;
+          globaltalkPkg = self.packages.${pkgs.system}.globaltalk;
         in
         {
           options.services.globaltalk = {
