@@ -1,14 +1,39 @@
 [project]
-name = "globaltalk-scraper"
+name = "globaltalk"
 version = "0.1.0"
-description = "Add your description here"
+description = "Tools for the GlobalTalk community AppleTalk network"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "pyyaml>=6.0.2",
+license = { file = "LICENSE" }
+authors = [
+  { name = "nikdoof" },
 ]
+keywords = ["appletalk", "globaltalk", "netatalk", "networking", "retro"]
+classifiers = [
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Monitoring",
+  "Topic :: System :: Networking",
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/nikdoof/globaltalk-scraper"
+Issues = "https://github.com/nikdoof/globaltalk-scraper/issues"
+Source = "https://github.com/nikdoof/globaltalk-scraper"
+
+[project.scripts]
+globaltalk = "globaltalk.__main__:main"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.8",
+  "pytest>=8.0",
+  "ruff>=0.12.8",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
