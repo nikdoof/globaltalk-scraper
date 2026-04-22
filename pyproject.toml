@@ -30,7 +30,7 @@ globaltalk = "globaltalk.__main__:main"
 
 [dependency-groups]
 dev = [
-  "pytest>=8.0",
+  "pytest>=9.0.3",
   "ruff>=0.12.8",
 ]
 
